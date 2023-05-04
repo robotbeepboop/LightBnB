@@ -70,7 +70,19 @@ const addUser = function (user) {
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function (guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+  return pool
+    .query(`SELECT *
+    FROM reservations
+    JOIN properties ON properties.id = property_id
+    WHERE reservations.guest_id = $1
+    LIMIT $2`, [guest_id, limit])
+    .then((result) => {
+      console.log(result.rows);
+      return result.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 
 /// Properties
